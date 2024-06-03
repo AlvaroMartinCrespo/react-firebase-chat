@@ -1,3 +1,9 @@
-# Lama Dev Chat App Starter template
+# Aplicación de Chat en Tiempo Real
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Esta es una aplicación de chat en tiempo real construida con React y Firebase.
+
+## Características
+
+- **Autenticación de usuarios**: Registro e inicio de sesión utilizando Firebase Authentication.
+- **Mensajería en tiempo real**: Envía y recibe mensajes instantáneamente con Firestore.
+- **Interfaz moderna**: Construida con React y Material-UI para una experiencia de usuario intuitiva.
