@@ -1,11 +1,12 @@
 import EmojiPicker from "emoji-picker-react"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 
 
 export default function Chat() {
     // Hooks
     const [open, setOpen] = useState(false)
     const inputRef = useRef(null)
+    const endRef = useRef(null)
 
     // Open emoji picker
     const handleSetOpen = () => {
@@ -18,6 +19,11 @@ export default function Chat() {
         inputRef.current.value = value + emoji.emoji
         setOpen(false)
     }
+
+    // Scroll to bottom
+    useEffect(() => {
+        endRef.current?.scrollIntoView({ behavior: "smooth" })
+    }, [inputRef])
 
     return<>
         <section className="container mx-auto my-3 flex flex-col justify-between h-full overflow-hidden py-3">
@@ -122,6 +128,10 @@ export default function Chat() {
                     </div>
                 </div>
 
+                <div ref={endRef}>
+
+                </div>
+
             </div>
             {/* Bottom */}
             <div className="flex justify-between items-center border-t border-gray-300 pt-4">
@@ -138,7 +148,11 @@ export default function Chat() {
                     <div className="absolute bottom-28">
                         <EmojiPicker open={open} onEmojiClick={addEmojiInput} />
                     </div>
-                    <button>Send</button>
+                    <button className="bg-blue-500 text-white dark:bg-blue-700 dark:text-gray-200 active:bg-blue-600 dark:hover:bg-blue-600 rounded-full p-1.5">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
                 </div>
             </div>
         </section>
