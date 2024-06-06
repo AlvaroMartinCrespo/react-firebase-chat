@@ -40,6 +40,7 @@ export default function Login() {
 
         try {
 
+            toast.loading("Creating account...")
             // Upload the image
             const imgUrl = await upload(avatar.file)
 
@@ -57,12 +58,15 @@ export default function Login() {
             await setDoc(doc(db, "userchats", res.user.uid), {
                 chats: []
             })
-
             
-
+            // Clear toast 
+            toast.dismiss()
             toast.success("Account created!")
-
             e.target.reset()
+            setAvatar({
+                file: null,
+                url:""
+            })
             
         } catch (err) {
             console.error(err)
@@ -141,14 +145,11 @@ export default function Login() {
                                 name="image"
                     />
                         </div>
-                        {
-                            avatar.file ? <>
-                                <div className="flex justify-center">
-                                    <img className="w-20 h-20 rounded-full object-cover" src={avatar.url} alt="avatar-img" />
-                                </div></>
-                                : <></>
-                        }
-
+                        
+                        <div className="flex justify-center">
+                            <img className="w-20 h-20 rounded-full object-cover" src={avatar.url ? avatar.url : "./avatar.png"} alt="avatar-img" />
+                        </div>
+                                
                     <div className="mb-4">
                     <label className="block text-white text-sm font-bold mb-2" htmlFor="register-email">
                         Email
