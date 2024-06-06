@@ -70,6 +70,8 @@ export default function Login() {
             
         } catch (err) {
             console.error(err)
+            // Clear toast 
+            toast.dismiss()
             toast.error(err.message , {
                 autoClose: 700
             })
