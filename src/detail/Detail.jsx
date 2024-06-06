@@ -8,7 +8,7 @@ export default function Detail() {
                     <span className="text-sm">Texto relacionado con el usuario</span>
                 </div>
                 <div className="flex justify-center">
-                    <button className="bg-red-500 text-white dark:bg-red-700 dark:text-gray-200 hover:bg-red-600 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 rounded-full px-4 py-2 flex items-center gap-2">
+                    <button className="bg-red-500 text-white dark:bg-red-700 dark:text-gray-200 hover:bg-red-600 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 rounded-full px-4 py-2 ">
                         Logout
                     </button>
                 </div>

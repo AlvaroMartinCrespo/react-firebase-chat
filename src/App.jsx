@@ -8,7 +8,7 @@ import "react-toastify/dist/ReactToastify.css"
 
 const App = () => {
 
-  const user = true;
+  const user = false;
 
   return (
     <div className="flex justify-center items-center h-screen">    

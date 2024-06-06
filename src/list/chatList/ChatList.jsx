@@ -1,4 +1,5 @@
 import { useState } from "react"
+import AddUser from "./addUser/addUser"
 
 export default function ChatList() {
     const [addModel, setAddModel] = useState(false)
@@ -73,7 +74,10 @@ export default function ChatList() {
                     <p>Hello</p>
                 </div>
             </div>
-
+            {
+                addModel ? <><AddUser /></> : <></>
+            }
+            
             </section>
     </>
 }
