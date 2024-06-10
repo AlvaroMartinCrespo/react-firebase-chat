@@ -16,6 +16,8 @@ const App = () => {
     const unSub = onAuthStateChanged(auth, (user) => {
       if (user) {
         fetchUserInfo(user.uid);
+      } else {
+        fetchUserInfo(null);
       }
 
       return () => {
@@ -25,7 +27,6 @@ const App = () => {
   }, [fetchUserInfo]);
 
   if (isLoading)
-    // Suggested code may be subject to a license. Learn more: ~LicenseLog:4116897645.
     return (
       <section className="bg-slate-900 flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center">
