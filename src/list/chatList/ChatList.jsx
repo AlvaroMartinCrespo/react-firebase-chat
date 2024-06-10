@@ -1,8 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddUser from './addUser/addUser';
+import { useUserStore } from '../../lib/userStore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
 
 export default function ChatList() {
+  const [chats, setChats] = useState([]);
   const [addModel, setAddModel] = useState(false);
+
+  const { currentUser } = useUserStore();
+
+  useEffect(() => {
+    const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
+      const items = res.data().chats;
+      const promises = items.map(async (items) => {
+        const docRef = doc(db, 'users', items);
+        const docSnap = await getDoc(docRef);
+
+        const user = docSnap.data();
+        return { ...items, user };
+      });
+      const chatData = await Promise.all(promises);
+
+      setChats(chatData.sort((a, b) => b.updateAt - a.updateAt));
+    });
+
+    return () => unSub();
+  }, [currentUser.id]);
+
+  console.log(chats);
 
   const handleAddModel = () => {
     setAddModel(!addModel);
@@ -32,14 +58,26 @@ export default function ChatList() {
           />
         </div>
 
-        <div className="flex items-center gap-5 mt-5 cursor-pointer border-b p-5 rounded transition hover:bg-[#333]">
-          <img className="h-16 w-16 rounded-full" src="./avatar.png" alt="avatar" />
-          <div>
-            <span>Chat Name</span>
-            <p className="text-xs">Hello</p>
+        {chats ? (
+          <div className="flex justify-center mt-10">
+            <span className="text-xs text-gray-500 italic">No hay chats actualmente</span>
           </div>
-        </div>
-        <div className="flex items-center gap-5 mt-5 cursor-pointer border-b p-5 rounded transition ease-in-out hover:bg-[#333]">
+        ) : (
+          chats.map((chat) => {
+            <div
+              className="flex items-center gap-5 mt-5 cursor-pointer border-b p-5 rounded transition hover:bg-[#333]"
+              key={chat.id}
+            >
+              <img className="h-16 w-16 rounded-full" src="./avatar.png" alt="avatar" />
+              <div>
+                <span>Chat Name</span>
+                <p className="text-xs">{chat.lastMessage}</p>
+              </div>
+            </div>;
+          })
+        )}
+
+        {/* <div className="flex items-center gap-5 mt-5 cursor-pointer border-b p-5 rounded transition ease-in-out hover:bg-[#333]">
           <img className="h-16 w-16 rounded-full" src="./avatar.png" alt="avatar" />
           <div>
             <span>Chat Name</span>
@@ -87,7 +125,7 @@ export default function ChatList() {
             <span>Chat Name</span>
             <p>Hello</p>
           </div>
-        </div>
+        </div> */}
         {addModel ? (
           <>
             <AddUser />
