@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { toast } from "react-toastify"
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { auth, db, storage } from "../lib/firebase"
 import { setDoc, doc } from "firebase/firestore"
 import upload from "../lib/upload"
@@ -14,6 +14,8 @@ export default function Login() {
         url:""
     })
 
+    const [loading, setLoading] = useState(false)
+
     // Put an imagen    
     const handleAvatar = (e) => {
         if(e.target.files[0]){
@@ -25,16 +27,36 @@ export default function Login() {
     }
 
     // Handle submit of login
-    const handleSubmitLogin = (e) => {
+    const handleSubmitLogin = async (e) => {
         e.preventDefault();
-        toast.success("Success", {
-            autoClose: 700
-        })
+        setLoading(true)
+        const formData = new FormData(e.target);
+        const { email, password } = Object.fromEntries(formData)
+        try {
+            
+            // Try to sign in
+            toast.loading("Signing in...")
+            await signInWithEmailAndPassword(auth, email, password)
+            setLoading(false)
+            toast.dismiss()
+            toast.success("Logged in!")
+
+        } catch (err) {
+            console.error(err)
+            // Clear toast 
+            toast.dismiss()
+            setLoading(false)
+            toast.error(err.message , {
+                autoClose: 1200
+            })
+        }
+
     }
 
 
     const handleRegister = async (e) => {
         e.preventDefault();
+        setLoading(!loading)
         const formData = new FormData(e.target);
         const { username, email, password, image } = Object.fromEntries(formData)
 
@@ -42,7 +64,11 @@ export default function Login() {
 
             toast.loading("Creating account...")
             // Upload the image
-            const imgUrl = await upload(avatar.file)
+            let imgUrl = ''
+            if (avatar.url) {
+                imgUrl = await upload(avatar.file)    
+            }
+            
 
             // Create user
             const res = await createUserWithEmailAndPassword(auth, email, password)
@@ -50,7 +76,7 @@ export default function Login() {
             await setDoc(doc(db, "users", res.user.uid), {
                 username, 
                 email, 
-                avatar: imgUrl,
+                avatar: imgUrl ? imgUrl : "./avatar.png",
                 id: res.user.uid,
                 blocked: []
             })
@@ -61,6 +87,7 @@ export default function Login() {
             
             // Clear toast 
             toast.dismiss()
+            setLoading(false)
             toast.success("Account created!")
             e.target.reset()
             setAvatar({
@@ -72,8 +99,9 @@ export default function Login() {
             console.error(err)
             // Clear toast 
             toast.dismiss()
+            setLoading(false)
             toast.error(err.message , {
-                autoClose: 700
+                autoClose: 1200
             })
         }
 
@@ -88,13 +116,14 @@ export default function Login() {
                 <form onSubmit={handleSubmitLogin}>
                     <div className="mb-4">
                     <label className="block text-white text-sm font-bold mb-2" htmlFor="login-username">
-                        Username
+                        Email
                     </label>
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                         id="login-username"
-                        type="text"
-                        placeholder="Username"
+                                type="email"
+                                name="email"
+                        placeholder="Email"
                     />
                     </div>
                     <div className="mb-6">
@@ -104,17 +133,18 @@ export default function Login() {
                     <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-black mb-3 leading-tight focus:outline-none focus:shadow-outline"
                         id="login-password"
-                        type="password"
+                                type="password"
+                                name="password"
                         placeholder="******************"
                     />
                     </div>
                     <div className="flex items-center justify-between">
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            <button disabled={loading}
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                                 type="submit"
                                 
                     >
-                        Login
+                        {loading ? "Loading..." : "Login"}
                     </button>
                     </div>
                 </form>
@@ -177,11 +207,11 @@ export default function Login() {
                     />
                     </div>
                     <div className="flex items-center justify-between">
-                    <button
+                    <button disabled={loading}
                         className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                         type="submit"
                     >
-                        Register
+                        {loading ? "Loading..." : "Register"}
                     </button>
                     </div>
                 </form>
