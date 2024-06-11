@@ -1,9 +1,12 @@
 import EmojiPicker from 'emoji-picker-react';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { useState, useRef, useEffect } from 'react';
+import { db } from '../lib/firebase';
 
 export default function Chat() {
   // Hooks
   const [open, setOpen] = useState(false);
+  const [chat, setChat] = useState();
   const inputRef = useRef(null);
   const endRef = useRef(null);
 
@@ -23,6 +26,13 @@ export default function Chat() {
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [inputRef]);
+
+  useEffect(() => {
+    const unSub = onSnapshot(doc(db, 'chats', '2rStJieQruUjlxDCcn6T'), (res) => {
+      setChat(res.data());
+    });
+    return () => unSub();
+  }, []);
 
   return (
     <>
