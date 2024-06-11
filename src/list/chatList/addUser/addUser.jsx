@@ -48,6 +48,8 @@ export default function AddUser({ onCloseModel }) {
   };
 
   const handleCreateChat = async () => {
+    // TODO: If chat exists do not create
+
     const chatRef = collection(db, 'chats');
     const userChatsRef = collection(db, 'userchats');
 
