@@ -71,7 +71,7 @@ export default function ChatList() {
               key={chat.chatId}
             >
               <img
-                className="h-16 w-16 rounded-full"
+                className="h-16 w-16 rounded-full object-cover"
                 src={chat.user.avatar ? chat.user.avatar : './avatar.png'}
                 alt="avatar"
               />

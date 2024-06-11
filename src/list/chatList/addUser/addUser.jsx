@@ -12,6 +12,7 @@ import {
 import { useState } from 'react';
 import { db } from '../../../lib/firebase';
 import { useUserStore } from '../../../lib/userStore';
+import { toast } from 'react-toastify';
 
 export default function AddUser({ onCloseModel }) {
   // Variables
@@ -74,6 +75,10 @@ export default function AddUser({ onCloseModel }) {
           receiverId: user.id,
           updatedAt: Date.now(),
         }),
+      });
+
+      toast.success('Chat created', {
+        autoClose: 600,
       });
     } catch (err) {
       console.error(err);

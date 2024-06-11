@@ -41,10 +41,16 @@ const App = () => {
       <div className="container mx-auto p-4 h-[90vh] w-[90vw] rounded bg-[#212121]">
         {currentUser ? (
           <>
-            <section className="grid grid-cols-3 gap-x-[65px] gap-y-[10px] h-full">
-              <List />
-              <Chat />
-              <Detail />
+            <section className="grid grid-cols-4 gap-x-[40px]  h-full">
+              <div className="col-span-1 overflow-hidden">
+                <List />
+              </div>
+              <div className="col-span-2 overflow-hidden">
+                <Chat />
+              </div>
+              <div className="col-span-1 flex flex-col items-center">
+                <Detail />
+              </div>
             </section>
           </>
         ) : (
