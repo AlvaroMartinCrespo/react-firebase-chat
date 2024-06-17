@@ -119,7 +119,7 @@ export default function Chat() {
             <img className="w-5 h-5 cursor-pointer" src="./camera.png" alt="camera" />
             <img className="w-5 h-5 cursor-pointer" src="./mic.png" alt="mic" />
           </div>
-          <div>
+          <div className="flex-grow mx-6">
             <input
               ref={inputRef}
               className="w-full pl-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 bg-gray-400 text-black"
