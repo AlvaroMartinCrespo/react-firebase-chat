@@ -3,6 +3,7 @@ import AddUser from './addUser/addUser';
 import { useUserStore } from '../../lib/userStore';
 import { doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
+import { useChatStore } from '../../lib/chatStore';
 
 export default function ChatList() {
   // Variables
@@ -14,6 +15,7 @@ export default function ChatList() {
   const [addModel, setAddModel] = useState(false);
 
   const { currentUser } = useUserStore();
+  const { changeChat } = useChatStore();
 
   useEffect(() => {
     const unSub = onSnapshot(doc(db, 'userchats', currentUser.id), async (res) => {
@@ -34,6 +36,10 @@ export default function ChatList() {
 
   const handleAddModel = () => {
     setAddModel(!addModel);
+  };
+
+  const handleSelect = async (chat) => {
+    changeChat(chat.chatId, chat.user);
   };
 
   return (
@@ -69,6 +75,7 @@ export default function ChatList() {
             <div
               className="flex items-center gap-5 mt-5 cursor-pointer border-b p-5 rounded transition hover:bg-[#333]"
               key={chat.chatId}
+              onClick={() => handleSelect(chat)}
             >
               <img
                 className="h-16 w-16 rounded-full object-cover"

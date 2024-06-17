@@ -2,6 +2,7 @@ import EmojiPicker from 'emoji-picker-react';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { useState, useRef, useEffect } from 'react';
 import { db } from '../lib/firebase';
+import { useChatStore } from '../lib/chatStore';
 
 export default function Chat() {
   // Hooks
@@ -9,6 +10,7 @@ export default function Chat() {
   const [chat, setChat] = useState();
   const inputRef = useRef(null);
   const endRef = useRef(null);
+  const { chatId, user } = useChatStore();
 
   // Open emoji picker
   const handleSetOpen = () => {
@@ -28,11 +30,11 @@ export default function Chat() {
   }, [inputRef]);
 
   useEffect(() => {
-    const unSub = onSnapshot(doc(db, 'chats', '2rStJieQruUjlxDCcn6T'), (res) => {
+    const unSub = onSnapshot(doc(db, 'chats', chatId), (res) => {
       setChat(res.data());
     });
     return () => unSub();
-  }, []);
+  }, [chatId]);
 
   return (
     <>
@@ -42,7 +44,7 @@ export default function Chat() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-5">
               <img className="rounded-full h-10 w-10" src="./avatar.png" alt="avatar" />
-              <span>Username</span>
+              <span>{user.username}</span>
             </div>
             <div className="flex items-center gap-5">
               <img className="h-4 w-4 cursor-pointer" src="./phone.png" alt="phone-user" />
@@ -53,68 +55,25 @@ export default function Chat() {
         </div>
         {/* Center */}
         <div className="overflow-y-auto py-4 px-2 flex flex-col gap-3 h-full">
-          {/* Message 1 */}
-          <div className="flex items-center justify-start">
-            <div className="flex items-center gap-3 w-[260px] bg-slate-800 p-3 rounded-lg">
-              <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
-              <div className="flex flex-col">
-                <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
-                <span className="text-xs text-gray-500 italic">Hace 1 min</span>
+          {chat?.messages?.map((message) => {
+            <>
+              <div className="flex items-center justify-end" key={message?.createAt}>
+                <div className="flex items-center gap-3 w-[260px] rounded-lg">
+                  <div className="flex flex-col">
+                    {message.img && <img className="rounded-lg" src={message.img} alt="imagen-de-prueba" />}
+                    <div className="mt-2 flex items-center gap-3 w-[260px] bg-blue-800 p-3 rounded-lg">
+                      <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
+                      <div className="flex flex-col">
+                        <p className="text-sm">{message.text}</p>
+                        {/* <span className="text-xs text-gray-500 italic">Hace 1 min</span> */}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          {/* Message 2 */}
-          <div className="flex items-center justify-end">
-            <div className="flex items-center gap-3 w-[260px] bg-blue-800 p-3 rounded-lg">
-              <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
-              <div className="flex flex-col">
-                <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
-                <span className="text-xs text-gray-500 italic">Hace 1 min</span>
-              </div>
-            </div>
-          </div>
-          {/* Message 1 */}
-          <div className="flex items-center justify-start">
-            <div className="flex items-center gap-3 w-[260px] bg-slate-800 p-3 rounded-lg">
-              <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
-              <div className="flex flex-col">
-                <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
-                <span className="text-xs text-gray-500 italic">Hace 1 min</span>
-              </div>
-            </div>
-          </div>
-          {/* Message 1 */}
-          <div className="flex items-center justify-start">
-            <div className="flex items-center gap-3 w-[260px] bg-slate-800 p-3 rounded-lg">
-              <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
-              <div className="flex flex-col">
-                <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
-                <span className="text-xs text-gray-500 italic">Hace 1 min</span>
-              </div>
-            </div>
-          </div>
-          {/* Message 2 */}
-          <div className="flex items-center justify-end">
-            <div className="flex items-center gap-3 w-[260px] bg-blue-800 p-3 rounded-lg">
-              <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
-              <div className="flex flex-col">
-                <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
-                <span className="text-xs text-gray-500 italic">Hace 1 min</span>
-              </div>
-            </div>
-          </div>
-          {/* Message 1 */}
-          <div className="flex items-center justify-start">
-            <div className="flex items-center gap-3 w-[260px] bg-slate-800 p-3 rounded-lg">
-              <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
-              <div className="flex flex-col">
-                <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
-                <span className="text-xs text-gray-500 italic">Hace 1 min</span>
-              </div>
-            </div>
-          </div>
-          {/* Message 2 imagen*/}
-          <div className="flex items-center justify-end">
+            </>;
+          })}
+          {/* <div className="flex items-center justify-end">
             <div className="flex items-center gap-3 w-[260px] rounded-lg">
               <div className="flex flex-col">
                 <img
@@ -122,20 +81,16 @@ export default function Chat() {
                   src="https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                   alt="imagen-de-prueba"
                 />
+                <div className="mt-2 flex items-center gap-3 w-[260px] bg-blue-800 p-3 rounded-lg">
+                  <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
+                  <div className="flex flex-col">
+                    <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
+                    <span className="text-xs text-gray-500 italic">Hace 1 min</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          {/* Message 2 */}
-          <div className="flex items-center justify-end">
-            <div className="flex items-center gap-3 w-[260px] bg-blue-800 p-3 rounded-lg">
-              <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
-              <div className="flex flex-col">
-                <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
-                <span className="text-xs text-gray-500 italic">Hace 1 min</span>
-              </div>
-            </div>
-          </div>
-          {/* Message 1 imagen*/}
           <div className="flex items-center justify-start">
             <div className="flex items-center gap-3 w-[260px] p-3 rounded-lg">
               <div className="flex flex-col">
@@ -144,10 +99,17 @@ export default function Chat() {
                   src="https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                   alt="imagen-de-prueba"
                 />
+                <div className="mt-2 flex items-center gap-3 w-[260px] bg-blue-800 p-3 rounded-lg">
+                  <img className="rounded-full h-5 w-5" src="./avatar.png" alt="avatar" />
+                  <div className="flex flex-col">
+                    <p className="text-sm">Este es mi primer mensaje en esta aplicacion de chat en tiempo real</p>
+                    <span className="text-xs text-gray-500 italic">Hace 1 min</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-
+          </div>{' '}
+          */}
           <div ref={endRef}></div>
         </div>
         {/* Bottom */}

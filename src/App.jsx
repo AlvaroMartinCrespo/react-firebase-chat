@@ -8,9 +8,11 @@ import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './lib/firebase';
 import { useUserStore } from './lib/userStore';
+import { useChatStore } from './lib/chatStore';
 
 const App = () => {
   const { currentUser, isLoading, fetchUserInfo } = useUserStore();
+  const { chatId } = useChatStore();
 
   useEffect(() => {
     const unSub = onAuthStateChanged(auth, (user) => {
@@ -38,19 +40,32 @@ const App = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="container mx-auto p-4 h-[90vh] w-[90vw] rounded bg-[#212121]">
+      <div className="container mx-auto p-4 h-[90vh] w-[95vw] rounded bg-[#212121]">
         {currentUser ? (
           <>
-            <section className="grid grid-cols-4 gap-x-[40px]  h-full">
+            <section className="grid grid-cols-4 gap-x-[40px] h-full">
               <div className="col-span-1 overflow-hidden">
                 <List />
               </div>
-              <div className="col-span-2 overflow-hidden">
-                <Chat />
-              </div>
-              <div className="col-span-1 flex flex-col items-center">
-                <Detail />
-              </div>
+              {chatId ? (
+                <>
+                  <div className="col-span-2 overflow-hidden">
+                    <Chat />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex justify-center items-center">No chat selected</div>
+                </>
+              )}
+
+              {chatId && (
+                <>
+                  <div className="col-span-1 flex flex-col items-center">
+                    <Detail />
+                  </div>
+                </>
+              )}
             </section>
           </>
         ) : (

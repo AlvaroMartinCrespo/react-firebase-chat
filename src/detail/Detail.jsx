@@ -1,3 +1,4 @@
+import { useChatStore } from '../lib/chatStore';
 import { auth } from '../lib/firebase';
 
 export default function Detail() {
@@ -5,14 +6,16 @@ export default function Detail() {
     auth.signOut();
   };
 
+  const { user } = useChatStore();
+
   return (
     <>
       <section className="container mx-auto">
         <div className="flex h-full flex-col justify-between">
           <div className="flex flex-col justify-center items-center gap-3 my-10 border-b border-gray-300 pb-10">
             <img className="rounded-full w-48 h-48" src="./avatar.png" alt="avatar" />
-            <h2 className="text-xl">Username</h2>
-            <span className="text-sm">Texto relacionado con el usuario</span>
+            <h2 className="text-xl">{user.username}</h2>
+            <span className="text-sm">{user.email}</span>
           </div>
           <div className="flex justify-center">
             <button
